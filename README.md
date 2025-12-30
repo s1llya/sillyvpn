@@ -28,7 +28,7 @@ AppImage создаётся сборкой и запускается обычн�
 ```
 ./scripts/build_appimage.sh
 ```
-Результат: `src-tauri/target/release/bundle/appimage/sillyvpn_0.1.0_amd64.AppImage`
+Результат: `src-tauri/target/release/bundle/appimage/sillyvpn_0.1.1_amd64.AppImage`
 
 ## Тестовый сценарий
 1. Импортируйте `.conf`

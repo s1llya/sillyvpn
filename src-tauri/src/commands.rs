@@ -111,7 +111,16 @@ pub fn run_app_via_vpn(app_id: String, store: State<'_, AppStateStore>) -> Resul
     args.push("--env".to_string());
     args.push(format!("{}={}", key, value));
   }
-  run_helper_vec(args).map_err(map_helper_error)?;
+  let log_path = store.log_path().to_path_buf();
+  let app_label = app.label.clone();
+  std::thread::spawn(move || {
+    if let Err(err) = run_helper_vec(args).map_err(map_helper_error) {
+      let _ = append_log(
+        &log_path,
+        &format!("Failed to start app via VPN: {} ({})", app_label, err),
+      );
+    }
+  });
   append_log(
     store.log_path(),
     &format!("Started app via VPN: {}", app.label),

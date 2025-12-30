@@ -26,7 +26,6 @@ export default function App() {
   const [logs, setLogs] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [polkit, setPolkit] = useState<PolkitStatus | null>(null);
 
   const selectedTunnel: Tunnel | undefined = useMemo(
     () => state.tunnels.find((t) => t.id === selectedTunnelId),
@@ -54,17 +53,33 @@ export default function App() {
     refreshLogs().catch(console.error);
     invoke<PolkitStatus>("check_polkit_agent")
       .then((status) => {
-        setPolkit(status);
         if (!status.running) {
           invoke("start_polkit_agent").catch(console.error);
         }
       })
       .catch(console.error);
+    const updateScale = () => {
+      const baseWidth = 1280;
+      const baseHeight = 720;
+      const scale = Math.min(
+        window.innerWidth / baseWidth,
+        window.innerHeight / baseHeight
+      );
+      const clamped = Math.max(1, Math.min(1.25, scale));
+      document.documentElement.style.setProperty(
+        "--ui-scale",
+        clamped.toFixed(3)
+      );
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
     const timer = setInterval(() => {
       refreshLogs().catch(console.error);
     }, LOG_POLL_MS);
+
     return () => {
       clearInterval(timer);
+      window.removeEventListener("resize", updateScale);
     };
   }, []);
 
@@ -167,26 +182,6 @@ export default function App() {
     }
   };
 
-  const onStartPolkit = async () => {
-    setError(null);
-    try {
-      await invoke("start_polkit_agent");
-      const status = await invoke<PolkitStatus>("check_polkit_agent");
-      setPolkit(status);
-    } catch (err) {
-      setError(String(err));
-    }
-  };
-
-  const onEnablePolkitAutostart = async () => {
-    setError(null);
-    try {
-      await invoke("enable_polkit_autostart");
-    } catch (err) {
-      setError(String(err));
-    }
-  };
-
   return (
     <div className="app">
       <header className="app-header">
@@ -199,27 +194,7 @@ export default function App() {
         </div>
       </header>
 
-      <div className="grid">
-        {polkit && !polkit.running && (
-          <section className="card polkit-card">
-            <div className="card-header">
-              <h2>Polkit agent</h2>
-              <span className="muted">required</span>
-            </div>
-            <p className="muted">
-              Polkit agent is not running. Privileged actions will fail.
-            </p>
-            <div className="status-actions">
-              <button className="ghost" onClick={onStartPolkit}>
-                Start agent
-              </button>
-              <button className="ghost" onClick={onEnablePolkitAutostart}>
-                Enable autostart
-              </button>
-            </div>
-          </section>
-        )}
-        <section className="card status-card">
+      <div className="grid">        <section className="card status-card">
           <div className="card-header">
             <h2>Status</h2>
             <span className="muted">live</span>
