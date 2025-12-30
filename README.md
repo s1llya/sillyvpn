@@ -21,12 +21,6 @@
 - `iptables`
 - `pkexec` + polkit‑agent
 
-### Polkit (KDE Plasma)
-```
-sudo pacman -S --needed polkit polkit-kde-agent
-/usr/lib/polkit-kde-authentication-agent-1 &
-```
-
 ## Запуск (AppImage)
 AppImage создаётся сборкой и запускается обычным пользователем. Политики/привилегии запрашиваются через `pkexec`.
 
