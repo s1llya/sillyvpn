@@ -1,0 +1,37 @@
+{
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "sillyvpn",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false
+      },
+      "dialog": {
+        "all": true
+      }
+    },
+    "windows": [
+      {
+        "title": "sillyvpn",
+        "width": 1100,
+        "height": 760,
+        "resizable": true
+      }
+    ],
+    "bundle": {
+      "active": true,
+      "targets": ["appimage"],
+      "identifier": "com.sillyvpn.app",
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.png"]
+    }
+  }
+}

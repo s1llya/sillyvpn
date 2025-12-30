@@ -1,0 +1,28 @@
+[package]
+name = "sillyvpn"
+version = "0.1.0"
+edition = "2021"
+default-run = "sillyvpn"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+default = ["custom-protocol"]
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tauri = { version = "1.5", features = ["custom-protocol", "dialog-all"] }
+thiserror = "1.0"
+uuid = { version = "1.6", features = ["v4"] }
+libc = "0.2"
+
+[dependencies.time]
+version = "0.3"
+features = ["formatting", "local-offset"]
+
+[[bin]]
+name = "sillyvpn-helper"
+path = "src/bin/sillyvpn-helper.rs"
